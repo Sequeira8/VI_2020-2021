@@ -3,7 +3,9 @@ Dashboard of StackOverflow Users Demographics Information
 
 ### Authors:
 Carlos Sequeira
+
 Cassandro Martinho
+
 Rui Nóbrega
 
 ## Setup
