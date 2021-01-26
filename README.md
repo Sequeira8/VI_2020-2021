@@ -10,7 +10,7 @@ Rui Nóbrega
 
 
 ## Setup
-Go to the project folder and run:
+Go to the project folder and on the Command Prompt run:
 ```
 python -m http.server 8888 &
 ```
