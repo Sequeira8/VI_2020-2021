@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<title>Smoothed D3.js Radar Chart</title>
+
+		<!-- Google fonts -->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300" rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+
+    	<style>
+			.ui-content {
+				-webkit-box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				box-sizing: border-box;
+				padding: 0;
+				border: 0;
+				border-image-width: 0;
+			}
+
+			#main_page {
+				background-color: #565656;
+				position: fixed;
+				bottom: 0;
+				right: 0;
+				top: -2%;
+				left: 0;
+			}
+			#x1{
+				margin-top: 1.75%;
+				background-color: #ececec;
+				padding: 34.97% 18.45%;
+				border-radius: 2.33%;
+			}
+			#y1{
+				margin-top: 1.75%;
+				background-color: #ececec;
+				padding: 34.97% 18.45%;
+				border-radius: 2.33%;
+			}
+			#settings{
+				width: 16%;
+				height: 91.1%;
+				float: left;
+				margin-top: 1.75%;
+				margin-bottom: 1.75%;
+				margin-left: 1.75%;
+				margin-right: 0.1%;
+				background-color: #ececec;
+				padding: 0.5%;
+				padding-top: 1.5%;
+				border-top-left-radius: 7%;
+				border-top-right-radius: 0.5%;
+				border-bottom-left-radius: 7%;
+				border-bottom-right-radius: 0.5%;
+			}
+			#radar_Chart{
+				position: relative;
+				top: 0;
+				right: 0;
+				float: left;
+				max-width: 50%;
+				max-height: 50%;
+				margin-bottom: 1.75%;
+				margin-top: 0.1%;
+				margin-left: 0.1%;
+				margin-right: 0.1%;
+				background-color: #ececec;
+				border-radius: 2.33%;
+				width: 39.5%;
+				height: 47.3%;
+			}
+			#map{
+				max-width: 50%;
+				max-height: 50%;
+				float: left;
+				margin-left: 0.1%;
+				margin-top: 1.75%;
+				margin-right: 0.1%;
+				margin-bottom: 0.1%;
+				background-color: #ececec;
+				border-radius: 2.33%;
+				position: relative;
+				top: 0;
+				right: 0;
+				width: 39.5%;
+				height: 47.3%;
+			}
+			#new_idiom {
+				max-width: 50%;
+				max-height: 50%;
+				float: left;
+				margin-left: 0.1%;
+				margin-top: 1.75%;
+				margin-right: 1.75%;
+				margin-bottom: 0.1%;
+				background-color: #ececec;
+				border-radius: 2.33%;
+				position: relative;
+				top: 0;
+				right: 0;
+				width: 39.5%;
+				height: 47.3%;
+			}
+			#bar_chart{
+				max-width: 50%;
+				max-height: 50%;
+				float: left;
+				margin-left: 0.1%;
+				margin-top: 0.1%;
+				margin-right: 1.75%;
+				margin-bottom: 1.75%;
+				background-color: #ececec;
+				border-radius: 2.33%;
+				position: relative;
+				top: 0;
+				right: 0;
+				width: 39.5%;
+				height: 47.3%;
+			}
+			body {
+				font-family: 'Open Sans', sans-serif;
+				font-size: 15px;
+				font-weight: 400;
+				fill: #000000;
+				text-align: center;
+				cursor: default;
+			}
+
+			.arrow {
+				border: solid black;
+				border-width: 0 3px 3px 0;
+				display: inline-block;
+				padding: 3px;
+			}
+
+			.up {
+				transform: rotate(-135deg);
+				-webkit-transform: rotate(-135deg);
+			}
+
+			.down {
+				transform: rotate(45deg);
+				-webkit-transform: rotate(45deg);
+			}
+
+			#ScrollMap{
+				border-radius: 1%;
+				position: absolute;
+				top: 20%;
+				left: 73%;
+				width: 25%;
+				height: 75%;
+				background-color: #ececec;
+				overflow: hidden;
+				border-style: solid;
+				border-color: black;
+				border-width: 1px;
+			}
+
+			#ScrollMapTop{
+				position: absolute;
+				top: 9%;
+				left: 95%;
+				font-size: 30px;
+				border-radius: 20px;
+			}
+			#ScrollMapBottom{
+				position: absolute;
+				top: 75%;
+				left: 95%;
+				font-size: 30px;
+				border-radius: 20px;
+			}
+
+
+			.names {
+				fill: none;
+				stroke: #fff;
+				stroke-linejoin: round;
+			}
+
+			/* Tooltip CSS */
+			.d3-tip {
+				line-height: 1.5;
+				font-weight: 400;
+				font-family:"avenir next", Arial, sans-serif;
+				padding: 0.7%;
+				background: rgba(79, 79, 79, 0.6);
+				color: #FFA500;
+				border-radius: 0.12%;
+				pointer-events: none;
+			}
+
+			/* Creates a small triangle extender for the tooltip */
+			.d3-tip:after {
+				box-sizing: border-box;
+				display: inline;
+				font-size: 8px;
+				width: 100%;
+				line-height: 1.5;
+				color: rgba(0, 0, 0, 0.6);
+				position: absolute;
+				pointer-events: none;
+
+			}
+
+			/* Northward tooltips */
+			.d3-tip.n:after {
+				content: "\25BC";
+				margin: -0.12% 0 0 0;
+				top: 100%;
+				left: 0;
+				text-align: center;
+			}
+
+			/* Eastward tooltips */
+			.d3-tip.e:after {
+				content: "\25C0";
+				margin: -0.25% 0 0 0;
+				top: 50%;
+				left: -0.93%;
+			}
+
+			/* Southward tooltips */
+			.d3-tip.s:after {
+				content: "\25B2";
+				margin: 0 0 0.12% 0;
+				top: -0.93%;
+				left: 0;
+				text-align: center;
+			}
+
+			/* Westward tooltips */
+			.d3-tip.w:after {
+				content: "\25B6";
+				margin: -0.25% 0 0 -0.12%;
+				top: 50%;
+				left: 100%;
+			}
+
+			/*
+            text{
+              pointer-events:none;
+            }
+            */
+
+			.details{
+				color: white;
+			}
+
+
+			.myButton {
+				vertical-align: top;
+				box-shadow:inset 0 0 0 0 #ffffff;
+				background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+				background-color:#ffffff;
+				border: 2px solid #dcdcdc;
+				border-bottom: 0 solid #dcdcdc;
+				width: 100%;
+				height: 4.08%;
+				display:inline-block;
+				cursor:pointer;
+				color:#666666;
+				font-family:Trebuchet MS, sans-serif;
+				font-size: 20px;
+				font-weight:bold;
+				text-decoration:none;
+			}
+			.myButton:hover {
+				background:linear-gradient(to bottom, #f6f6f6 5%, #E5E5E5 100%);
+				background-color:#f6f6f6;
+			}
+			.myButton:active {
+				position:relative;
+				top:0.12%;
+			}
+			.col-sm{
+				border: 2px solid #dcdcdc;
+				border-bottom: 0 solid #dcdcdc;
+				height: 11%;
+			}
+			.slidername{
+				text-align: center;
+				margin: auto;
+				color:#666666;
+			}
+			.dropdown{
+				text-align: center;
+				width: 70%;
+				display: flex;
+				margin: auto;
+			}
+			#vertical_axis{
+				left: 16%;
+				top: 10.5%;
+				position: absolute;
+				z-index: 5;
+			}
+			img {
+				max-width: 100%;
+				max-height: 100%;
+				top: 0;
+				left: 8.8%;
+				bottom: 0;
+				right: 0;
+				position:absolute;
+				z-index:2;
+			}
+			#myCanvas {
+				top: 8.67%;
+				left: 24.7%;
+				position:absolute;
+				z-index:1;
+			}
+			#new_idiom_value {
+				position: absolute;
+				top: 80%;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				z-index: 7;
+				font-size: 20px;
+			}
+			#my_dataviz {
+				position: absolute;
+				top: 10%;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 1;
+			}
+			#donut_category2 {
+				position: absolute;
+				text-align: center;
+				right: 0;
+				left: 0;
+				width: 35%;
+				display: flex;
+				margin: auto;
+				z-index: 20;
+			}
+		</style>
+
+	</head>
+	<body>
+	<script src="./Scripts/newIdiom.js" charset="utf-8"></script>
+
+	<!-- D3.js -->
+	<script src="https://d3js.org/d3.v6.min.js" charset="utf-8"></script>
+	<script src="https://d3js.org/d3-path.v1.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="./build/angular.min.js"></script>
+	<script type="text/javascript" src="./datasets/csvjson.json"></script>
+	<script type="text/javascript" src="./build/jquery.js"></script>
+
+	<script src="https://unpkg.com/d3-simple-slider"></script>
+	<script src="./build/d3-v6-tip.js"></script>
+
+
+	<script src="https://d3js.org/topojson.v1.min.js"></script>
+	<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.10.3/babel.min.js'></script>
+	<script src="./Scripts/oscars.js"></script>
+	<script src="./Scripts/radarChart.js" charset="utf-8"></script>
+	<script src="./Scripts/dataManipulation.js" charset="utf-8"></script>
+	<script src="./Scripts/barchart.js" charset="utf-8"></script>
+	<div id ="main_page" class="ui-content" role="main">
+		<div class="setup" id="settings">
+
+			<button class="myButton" id="totalusersbutton" >Total Users</button>
+			<button class="myButton" id="agebutton">Age</button>
+
+			<div class="col-sm" style="  ">
+				<div id="slider-range1">
+				</div>
+			</div>
+
+			<button class="myButton" id="dollarsbutton">Dollars per hour</button>
+
+			<div class="col-sm" style=" ">
+				<div id="slider-range2">
+				</div>
+			</div>
+
+			<button class="myButton" id="salarybutton">Salary</button>
+
+			<div class="col-sm" style=" ">
+				<div id="slider-range3">
+					<h2 id='salary' class="slidername"></h2>
+				</div>
+			</div>
+
+			<button class="myButton" id="workhoursbutton" >Work Hours per Week</button>
+
+			<div class="col-sm">
+				<div id="slider-range4">
+				</div>
+			</div>
+
+			<button class="myButton" id="yearscodingbutton" >Years Coding</button>
+
+			<div class="col-sm" style="border-bottom: 2px solid #dcdcdc;">
+				<div id="slider-range5">
+				</div>
+			</div>
+
+			<div class="col-sm" style=" border-top: 0; height:7.58%;">
+
+				<h2 id='Category' class="slidername" >Category</h2>
+				<div id="categorydropdown">
+					<select class="dropdown" id="selectButton"></select>
+				</div>
+			</div>
+
+			<div class="col-sm" style=" border-bottom: 2px solid #dcdcdc; height: 7.58%;">
+
+				<h2 id='Category1' class="slidername" >Education</h2>
+				<div id="categorydropdown1" style="">
+					<select class="dropdown2" id="selectButton2" style="text-align: center;
+          width: 35%; height: 15%;   float: left;  margin-left: 1.5% "></select>
+
+					<h2 style="color:#666666;float: left; margin-left: 12%; margin-right: 12%; margin-top: -3%"> - </h2>
+
+					<select class="dropdown2" id="selectButton3" style="text-align: center;
+          width: 35%; height: 15%; margin-right: 1.5%;  float: right;"></select>
+				</div>
+			</div>
+
+
+		</div>
+
+		<div class="idiom" id="map">
+			<div id="ScrollMap"></div>
+			<div id="ScrollMapTop"><p><i class="arrow up"></i></p></div>
+			<div id="ScrollMapBottom"><p><i class="arrow down"></i></p></div>
+		</div>
+
+		<div class="idiom" id="new_idiom">
+			<div id="vertical_axis"></div>
+			<canvas id="myCanvas" width="10000" height="10000"></canvas>
+			<img src="./Support%20Files/NewIdiomImage.png" alt=""/>
+			<div id="new_idiom_value"></div>
+		</div>
+
+		<div class="radarChart" id ="radar_Chart">
+			<div>
+				<label id="GenderSeparationLabel"><input type="checkbox" name="GenderSeparation" id="GenderSeparation" checked>Separate Genders</label>
+				<style>
+					#GenderSeparationLabel {
+						position: absolute;
+						bottom: 0.62%;
+						right: 0.62%;
+						font-size: 15px;
+					}
+				</style>
+			</div>
+		</div>
+		<div class="idiom" id="bar_chart">
+			<select name="category2" class="dropdown" id="donut_category2"></select>
+			<div id="my_dataviz"></div>
+		</div>
+	</div>
+
+		<script>
+			// Screen Size
+
+			window_height = $(window).height()
+			window_width = $(window).width()
+
+			//////////////////////////////////////////////////////////////
+			////////////////////////// Data //////////////////////////////
+			//////////////////////////////////////////////////////////////
+
+			/////////////////////////////////////////////////////////////
+			// New Idiom
+			$.ajax({
+				dataType: "json",
+				url: "./datasets/json_map.json",
+				async: false,
+				success: function(data){loadNewIdiomData(data)}
+			});
+
+			initialSetup(window_width, window_height)
+			setupNewIdiomAfterButton(5)
+
+			/////////////////////////////////////////////////////////////
+			// Radar Charts
+
+			var csvData;
+			var snapshot_csvData;
+			var input_data;
+			var allGenders = [];
+			var data;
+			var flag = true;
+
+			$.ajax({
+				dataType: "json",
+				url: "./datasets/csvjson.json",
+				async: false,
+				success: function(data){csvData = data}
+			});
+
+			snapshot_csvData = defiant.getSnapshot(csvData)
+
+			let filterOptions = {
+				category: "Ethnicity"
+			}
+
+			update_data()
+
+			/////////////////////////////////////////////////////////////
+			// Bar Chart
+
+			dataForBarChart("Ethnicity", "Employment")
+
+			///////////////////////////////////////////////////////////
+
+			///////////////////////////////////////////////////////////
+			// MAP e BUTTONS
+
+			var previous_selected = '#totalusersbutton';
+			var view_non_selected = '2px solid #dcdcdc';
+			var view_non_selected_bottom = '0px solid #dcdcdc';
+			var view_selected = '2px solid #000000';
+
+			//change total user to selected
+			d3.select(previous_selected).style('border',view_selected);
+
+
+			//define button change
+			function changebutton(id,previous,select,non_select) {
+				//deselect previous button
+				d3.select(previous).style('border',non_select);
+				d3.select(previous).style('border-bottom',view_non_selected_bottom);
+				//select new button
+				d3.select(id).style('border',select);
+				previous_selected = id;
+
+			}
+			//Click Ages
+			let clickAge = function (d) {
+				d3.select('#map').selectAll('svg').remove();
+				delete_scroll();
+				d3.select('.d3-tip').remove();
+				create_map('age');
+				changebutton('#agebutton',previous_selected,view_selected,view_non_selected);
+				setupNewIdiomAfterButton(0);
+				send_countries({})
+			}
+			let clickDollars = function (d) {
+				d3.select('#map').selectAll('svg').remove();
+				d3.select('.d3-tip').remove();
+				delete_scroll();
+				create_map('dollarshour');
+				changebutton('#dollarsbutton',previous_selected,view_selected,view_non_selected);
+				setupNewIdiomAfterButton(1);
+				send_countries({})
+			}
+			let clickSalary = function (d) {
+				d3.select('#map').selectAll('svg').remove();
+				d3.select('.d3-tip').remove();
+				delete_scroll();
+				create_map('salary');
+				changebutton('#salarybutton',previous_selected,view_selected,view_non_selected);
+				setupNewIdiomAfterButton(2);
+				send_countries({})
+			}
+			let clickWorkWeek = function (d) {
+				d3.select('#map').selectAll('svg').remove();
+				d3.select('.d3-tip').remove();
+				delete_scroll();
+				create_map('workweek');
+				changebutton('#workhoursbutton',previous_selected,view_selected,view_non_selected);
+				setupNewIdiomAfterButton(3);
+				send_countries({})
+			}
+			let clickYears = function (d) {
+				d3.select('#map').selectAll('svg').remove();
+				d3.select('.d3-tip').remove();
+				delete_scroll();
+				create_map('yearscode');
+				changebutton('#yearscodingbutton',previous_selected,view_selected,view_non_selected);
+				setupNewIdiomAfterButton(4);
+				send_countries({})
+			}
+			let clickTotal = function (d) {
+				d3.select('#map').selectAll('svg').remove();
+				d3.select('.d3-tip').remove();
+				delete_scroll();
+				create_map('users');
+				changebutton('#totalusersbutton',previous_selected,view_selected,view_non_selected);
+				setupNewIdiomAfterButton(5);
+				send_countries({})
+			}
+
+
+			d3.select('#agebutton').on("click", clickAge);
+			d3.select('#dollarsbutton').on("click", clickDollars);
+			d3.select('#salarybutton').on("click", clickSalary);
+			d3.select('#workhoursbutton').on("click", clickWorkWeek);
+			d3.select('#yearscodingbutton').on("click", clickYears);
+			d3.select('#totalusersbutton').on("click", clickTotal);
+
+			///////////////////////////////////////////////////////////
+			// SLIDERS
+
+			function arrayEquals(a, b) {
+				return Array.isArray(a) &&
+						Array.isArray(b) &&
+						a.length === b.length &&
+						a.every((val, index) => val === b[index]);
+			}
+
+			function on_change_age(value) {
+				// change_load_info
+				if (arrayEquals(value, [10,90])) {
+					delete filterOptions['age'];
+				} else {
+					filterOptions['age'] = value;
+				}
+				update_data()
+				create_radar_after_filter()
+			}
+
+			function on_change_dollars(value) {
+				// change_load_info
+				if (arrayEquals([0, 2000],value)) {
+					delete filterOptions['dollars'];
+				}
+				else {
+					filterOptions['dollars'] = value;
+				}
+				update_data()
+				create_radar_after_filter()
+			}
+
+			function on_change_salary(value) {
+				if (arrayEquals([0, 2000000])) {
+					delete filterOptions['salary'];
+				}
+				else {
+					filterOptions['salary'] = value;
+				}
+				update_data()
+				create_radar_after_filter()
+			}
+
+			function on_change_workHours(value) {
+				// change_load_info
+				if (arrayEquals([10,130])) {
+					filterOptions['workHours'] = [];
+				}
+				else {
+					filterOptions['workHours'] = value;
+				}
+				update_data()
+				create_radar_after_filter()
+			}
+
+			function on_change_yearsCoding(value) {
+				// change_load_info
+				if (arrayEquals([0,60])) {
+					filterOptions['yearsCoding'] = [];
+				}
+				else {
+					filterOptions['yearsCoding'] = value;
+				}
+				update_data()
+				create_radar_after_filter()
+			}
+
+			function on_change_Education(flag) {
+				var education_min = ["Secondary School or Less", "Bachelors Degree","Masters Degree", "PhD"]
+				var education_max = ["PhD", "Masters Degree", "Bachelors Degree", "Secondary School or Less"]
+
+				var education_interval = [d3.select("#selectButton2").node().value, d3.select("#selectButton3").node().value]
+
+				for (var i = 0; i<4; i++){
+					if(education_interval[0].normalize() === education_min[i].normalize()){
+						var x = i
+					}
+					if(education_interval[1].normalize() === education_max[i].normalize()){
+						var y = 3-i
+					}
+				}
+
+				if (x > y && flag === 0){
+					d3.select("#selectButton3").node().value = education_interval[0]
+					education_interval[1] = education_interval[0]
+				}
+
+				if (x > y && flag === 1){
+					d3.select("#selectButton2").node().value = education_interval[1]
+					education_interval[0] = education_interval[1]
+				}
+
+				// usar os valores para alterar dataset
+				// change_load_info
+				filterOptions['education'] = education_interval;
+				update_data()
+				create_radar_after_filter()
+			}
+
+			d3.select("#selectButton").on("change", new_category);
+			d3.select("#donut_category2").on("change", new_category);
+			d3.select("#selectButton2").on("change", function () {on_change_Education(0);});
+			d3.select("#selectButton3").on("change", function () {on_change_Education(1);});
+
+
+			///////////////////////////////////////////////////////////
+
+			function ScaleContentToDevice(){
+				$(".ui-content").width(window_width);
+				$(".ui-content").height(window_height);
+			}
+
+			$(document).ready(ScaleContentToDevice());
+
+			$(document).on("pagecontainershow", ScaleContentToDevice());
+
+			$(window).on("resize", ScaleContentToDevice());
+
+			//////////////////////////////////////////////////////////////
+			//////////////////////// Set-Up Radar Chart///////////////////
+			//////////////////////////////////////////////////////////////
+
+			var margin = { top: 50, right: 80, bottom: 50, left: 80 },
+				width = Math.min(700, window.innerWidth / 4) - margin.left - margin.right,
+				height = Math.min(width, window.innerHeight - margin.top - margin.bottom);
+
+
+			//////////////////////////////////////////////////////////////
+			////// First example /////////////////////////////////////////
+			///// (not so much options) //////////////////////////////////
+			//////////////////////////////////////////////////////////////
+			let RadarChartOptions_input_data = {
+				margin: margin,
+				maxValue: 100,
+				levels: 10,
+				roundStrokes: true,
+				color: d3.scaleOrdinal().range(["#E09D3C", "#FF0054", "#085090", "#8FA010"]),
+				format: '.0f',
+				unit: '%',
+				legend: { title: '', translateX: 100, translateY: 40 },
+				window_width: window_width,
+				window_height: window_height
+			};
+
+			let RadarChartOptions_allGenders = {
+				margin: margin,
+				maxValue: 100,
+				levels: 10,
+				roundStrokes: true,
+				color: d3.scaleOrdinal().range(["#88a998"]),
+				format: '.0f',
+				unit: '%',
+				legend: { title: '', translateX: 100, translateY: 40 },
+				window_width: window_width,
+				window_height: window_height
+			};
+
+			let RadarChartOptions = RadarChartOptions_input_data
+
+
+			// Draw the chart, get a reference the created svg element :
+			let svg_radar = RadarChart(".radarChart", input_data, RadarChartOptions);
+
+
+			// Button for all genders
+			d3.select("#GenderSeparation").on("change", switch_genders);
+
+			function update_data() {
+				input_data = CSVData(csvData, snapshot_csvData, filterOptions)
+				update_allGenders();
+			}
+
+			function switch_genders(){
+				if(d3.select("#GenderSeparation").property("checked")) {
+					// data = defiant.json.search(input_data, '//*');
+					data = input_data
+					RadarChartOptions = RadarChartOptions_input_data
+					flag = true
+					svg_radar = RadarChart(".radarChart", data, RadarChartOptions);
+				} else {
+					data = allGenders
+					RadarChartOptions = RadarChartOptions_allGenders
+					flag = false
+					svg_radar = RadarChart(".radarChart", data, RadarChartOptions);
+				}
+			}
+
+			function create_radar_after_filter(){
+				if (flag) {
+					data = input_data
+					RadarChartOptions = RadarChartOptions_input_data
+					svg_radar = RadarChart(".radarChart", data, RadarChartOptions);
+				} else {
+					data = allGenders
+					RadarChartOptions = RadarChartOptions_allGenders
+					svg_radar = RadarChart(".radarChart", data, RadarChartOptions);
+				}
+			}
+
+			function new_category(){
+				var allCategory = ["Ethnicity", "Education", "Employment", "Job_Satisfaction", "Programming_Language",
+					"MainBranch", "Operating_System", "Sexuality", "Remote_Frequency"];
+
+				filterOptions.category = d3.select("#selectButton").node().value
+				let category2 = d3.select("#donut_category2").node().value
+				update_data()
+				create_radar_after_filter()
+				dataForBarChart(filterOptions.category, category2)
+			}
+
+			function update_allGenders(){
+				let allGenders_aux = []
+				allGenders_aux.push(angular.copy(input_data[0]))
+				allGenders_aux[0].name = "All Genders"
+				for (let i = 1; i < input_data.length - 1; i++) {
+					for (let j = 0; j < input_data[i].axes.length; j++) {
+						allGenders_aux[0].axes[j].value += input_data[i].axes[j].value
+						allGenders_aux[0].axes[j].id = "All Genders"
+					}
+				}
+				allGenders = allGenders_aux
+			}
+
+			function send_countries(list_countries){
+				if(list_countries) {
+					filterOptions["countries"] = [Object.keys(list_countries)]
+					// data junta
+					update_data()
+					create_radar_after_filter()
+				}
+				newIdiomChangedCountries(list_countries)
+			}
+
+
+			//////////////////////////////////////////////////////////////
+			///// Second example /////////////////////////////////////////
+			///// Chart legend, custom color, custom unit, etc. //////////
+			//////////////////////////////////////////////////////////////
+		</script>
+	</body>
+</html>
