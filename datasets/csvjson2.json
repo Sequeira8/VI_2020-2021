@@ -1,0 +1,21 @@
+[
+  {
+    "ID": 5,
+    "Salary in USD": 108474,
+    "Country": "Ukraine",
+    "Education": "Bachelor's Degree",
+    "Employment": "Employed full-time",
+    "Ethnicity": "White or of European descent",
+    "Gender": "Man",
+    "Job Satisfaction": "Slightly dissatisfied",
+    "Programming Language": "C++",
+    "MainBranch": "I am a developer by profession",
+    "Operating System": "Linux-based",
+    "Age": 30,
+    "Sexuality": "Straight / Heterosexual",
+    "Remote Frequency": "A few days each month",
+    "WorkWeekHrs": 55,
+    "YearsCode": 16,
+    "Dollars per Hour": 37.93
+  }
+]
