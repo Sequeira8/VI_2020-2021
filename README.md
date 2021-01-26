@@ -1,5 +1,4 @@
-![](https://fenix-ashes.ist.utl.pt/open/trunk/fenix/src/main/webapp/images/newImage2012/apple-touch-icon-114x114-precomposed.png)
-# VI 2020 2021
+# VI 2020 2021 - Instituto Superior Técnico of Lisbon
 Dashboard of StackOverflow Users Demographics Information
 
 ### Authors: 
